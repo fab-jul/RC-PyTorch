@@ -195,7 +195,7 @@ def main(args, configs_dir=DEFAULT_CONFIG_DIR):
                           log_config,
                           num_workers,
                           saver=saver, restorer=restorer,
-                          experiment_description=(flags.description if not flags.temporary else None))
+                          )
     if not flags.debug:
         trainer.train()
     else:
