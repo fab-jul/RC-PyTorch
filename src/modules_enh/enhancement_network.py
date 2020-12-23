@@ -26,7 +26,7 @@ from helpers.global_config import global_config
 from helpers.quantized_tensor import NormalizedTensor
 from modules import edsr, act, prob_clf, ups
 from modules.conditional_instance_norm import ConditionalInstanceNorm2d
-from modules.gdn import GDN, CGDN
+from modules.gdn import GDN
 
 
 class SequentialWithSkip(nn.Module):
@@ -141,19 +141,6 @@ class EnhancementNetwork(vis.summarizable_module.SummarizableModule):
             print('***Using Instance Norm!')
             norm_cls = lambda: nn.InstanceNorm2d(Cf, affine=True)
 
-        global_config.assert_only_one('cgdn', 'gdn')
-        if global_config.get('cinorm', False):
-            num_bins = global_config['cinorm']
-            print('***Using Conditional Instance Norm!')
-            norm_cls = lambda: ConditionalInstanceNorm2d(Cf, num_bins)
-        if global_config.get('cin_eb', False):
-            num_bins = cin_bins.get_num_bins(global_config['cin_eb'])
-            print('***Using Conditional Instance Norm w/ evenly spaced bins!')
-            norm_cls = lambda: ConditionalInstanceNorm2d(Cf, num_bins)
-        if global_config.get('cgdn', False):
-            num_bins = cin_bins.get_num_bins(global_config['cgdn'])
-            print('***Using Conditional GDN w/ evenly spaced bins!')
-            norm_cls = lambda: CGDN(Cf, num_bins)
         if global_config.get('gdn', False):
             norm_cls = lambda: GDN(Cf)
 
