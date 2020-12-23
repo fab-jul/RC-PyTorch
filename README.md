@@ -28,15 +28,14 @@ The released code is very close to what we used when running experiments
 for the paper. The codebase evolved from the [L3C repo](https://github.com/fab-jul/L3C-PyTorch/)
 and contains code that is unused in this paper.
 
-## Naming
+#### Naming
 
 Files specific to this paper usually are marked "enhancement" or "enh" as 
 this was the internal name. We frequently use the following terms:
 
-- `x_r` / "raw" image: The input image, uncompressed. Note that this is inconsistent with the paper, where `x_r` is the residual
-- ``
+- `x_r` / "raw" / "ground-truth" (gt) image: The input image, uncompressed. Note that this is inconsistent with the paper, where `x_r` is the residual
 - `x_l` / "lossy" / "compressed" image: The image obtained by feeding the raw iamge through BPG.
-
+- `res`: Residual between raw and lossy.
 
 # Setup Environment
 
@@ -47,12 +46,22 @@ other structure is supported.
 
 ```
 $RC_ROOT/
-    datasets/
+    datasets/       <-- See the "Preparing datasets" section.
     models/         <-- The result of get_models.sh, see below
     RC-PyTorch/     <-- The result of a git clone of this repo
         src/
         tests/
         README.md   <-- This file
+        ...
+```
+
+To set this up:
+
+```bash
+RC_ROOT=/path/to/wherever/you/want
+mkdir -p $RC_ROOT
+pushd $RC_ROOT
+git clone https://github.com/fab-jul/RC-PyTorch .
 ```
 
 ## BPG
@@ -60,10 +69,14 @@ $RC_ROOT/
 To run the code in this repo, you need BPG.
 Follow the instractions on http://bellard.org/bpg/ to install it.
 
-## Python ENV
+Afterwards, make sure `bpgenc` and `bpgdec` is in `$PATH` 
+by running `bpgenc` in your console.
+
+## Python Environment
 
 To run the code, you need Python 3.7 or newer, and PyTorch 1.1.0. 
-The following assumes you use [conda](TODO) to set this up:
+The following assumes you use [conda](https://docs.conda.io/en/latest/miniconda.html)
+to set this up:
 
 ```bash
 NAME=pyt11  # You can change this to whatever you want.
@@ -81,7 +94,6 @@ pip install -r requirements.txt
 
 # Preparing datasets
 
-Make sure `bpgenc` is in `$PATH` by running `bpgenc` in your console.
 
 We preprocess our datasets by compressing each image with a variety of
 BPG quantization levels, as described in the following. Since the Q-classifier
@@ -90,8 +102,8 @@ The pre-processing with all these Q is an artifact of the fact that this code
 was used for experimentation also. In the "real world", we would run
 BPG only with the Q that is output by the Q-classifier.
 
-NOTE: This can take ~1h total,
-which is why we ran it on a CPU cluster.
+_Note_: This can take ~1h total,
+and we ran it on a CPU cluster.
 The code is somewhat generic but very likely needs to be adapted to your
 cluster, so by default it runs on the current host with 16 processes.
 See `task_array.py` for more info. 
@@ -101,7 +113,8 @@ See `task_array.py` for more info.
 First download the CLIC 2020 validation sets if you don't have them already:
 
 ```bash
-pushd $RC_ROOT/datasets
+pushd "$RC_ROOT/datasets"
+
 wget https://data.vision.ee.ethz.ch/cvl/clic/mobile_valid_2020.zip
 unzip mobile_valid_2020.zip  # Note: if you don't have unzip, use "jar xf"
 mv valid mobile_valid  # Give the extracted archive a unique name
@@ -114,7 +127,7 @@ mv valid professional_valid  # Give the extracted archive a unique name
 Preprocess with BPG (see above).
 
 ```bash
-pushd $RC_ROOT/RC-PyTorch/src
+pushd "$RC_ROOT/RC-PyTorch/src"
 bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/mobile_valid
 bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/professional_valid
 ```
@@ -124,37 +137,39 @@ bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/professional_valid
 For Open Images, we use the same validation set that we used for L3C,
 which can download here: [Open Images Validation 500](http://data.vision.ee.ethz.ch/mentzerf/validation_sets_lossless/val_oi_500_r.tar.gz)
 
-- [ ] TODO: link on L3C in a smarter way 
-
 ```bash
-pushd $RC_ROOT/RC-PyTorch/src
+pushd "$RC_ROOT/datasets"
+wget http://data.vision.ee.ethz.ch/mentzerf/validation_sets_lossless/val_oi_500_r.tar.gz
+mkdir val_oi_500_r && pushd val_oi_500_r
+tar xvf ../val_oi_500_r.tar.gz
+
+pushd "$RC_ROOT/RC-PyTorch/src"
 bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/val_oi_500_r
 ```
 
 ### DIV2K
 
 ```bash
-pushd $RC_ROOT/datasets
+pushd "$RC_ROOT/datasets"
 wget http://data.vision.ee.ethz.ch/cvl/DIV2K/DIV2K_valid_HR.zip
 unzip DIV2K_valid_HR.zip
 
-pushd $RC_ROOT/RC-PyTorch/src
+pushd "$RC_ROOT/RC-PyTorch/src"
 bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/DIV2K_valid_HR
 ```
 
 # Running models used in the paper
 
-## Download models
+### Download models
 
 Download our models with `get_models.sh`:
 
 ```bash
-RC_ROOT="/set/this/path/"
 MODELS_DIR="$RC_ROOT/models"
 bash get_models.sh "$MODELS_DIR"
 ```
 
-## Get bpsp on Open Images Validation 500
+### Get bpsp on Open Images Validation 500
 
 After downloading and preparing Open Images as above, and 
 downloading the models, you can 
@@ -172,7 +187,7 @@ CUDA_VISIBLE_DEVICEs=0 python -u run_test.py \
     "$MODELS_DIR" 1109_1715 "AUTOEXPAND:$DATASET_DIR/val_oi_500_r" \
     --restore_itr 1000000 \
     --tau \
-    --clf_p $MODELS_DIR/1115_1729*/ckpts/*.pt \
+    --clf_p "$MODELS_DIR/1115_1729*/ckpts/*.pt" \
     --qstrategy CLF_ONLY
 ```
 
@@ -201,7 +216,7 @@ CUDA_VISIBLE_DEVICEs=0 python -u run_test.py \
     "AUTOEXPAND:$DATASET_DIR/professional_valid,AUTOEXPAND:$DATASET_DIR/DIV2K_valid_HR,AUTOEXPAND:$DATASET_DIR/mobile_valid,AUTOEXPAND:$DATASET_DIR/val_oi_500_r" \
     --restore_itr 1000000 \
     --tau \
-    --clf_p $MODELS_DIR/1115_1729*/ckpts/*.pt \
+    --clf_p "$MODELS_DIR/1115_1729*/ckpts/*.pt" \
     --qstrategy CLF_ONLY
 ```
 
@@ -216,12 +231,12 @@ val_oi_500_r...         1109_1715   998500   1.393e+01   2.790
 
 ## Our TB
 
-TODO: Link TB
+TODO: Link our tensorboard.
 
 
 # Training your own models
 
-TODO
+TODO: Instructions
 
 ## Prepare datasets
 
