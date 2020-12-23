@@ -16,15 +16,11 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with L3C-PyTorch.  If not, see <https://www.gnu.org/licenses/>.
 """
-import random
 import re
-import os
 import glob
+import os
+import re
 
-
-from dataloaders.compressed_images_loader import get_residual_dataset, MetaResidualDataset
-from dataloaders.images_loader import IndexImagesDataset
-from helpers.testset import Testset
 
 
 def name_from_images(flag):

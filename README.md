@@ -50,7 +50,7 @@ $RC_ROOT/
     models/         <-- The result of get_models.sh, see below
     RC-PyTorch/     <-- The result of a git clone of this repo
         src/
-        tests/
+        figs/
         README.md   <-- This file
         ...
 ```
@@ -61,7 +61,7 @@ To set this up:
 RC_ROOT=/path/to/wherever/you/want
 mkdir -p $RC_ROOT
 pushd $RC_ROOT
-git clone https://github.com/fab-jul/RC-PyTorch .
+git clone https://github.com/fab-jul/RC-PyTorch
 ```
 
 ## BPG
@@ -236,8 +236,42 @@ TODO: Link our tensorboard.
 
 # Training your own models
 
-TODO: Instructions
 
 ## Prepare datasets
 
 ## Train
+
+To train your own models, use `train.py`. The following command was used
+to train the models released above:
+
+```bash
+
+# You can set this to whatever you want
+LOGS_DIR="$RC_ROOT/models"
+
+CUDA_VISIBLE_DEVICES=0 python train.py \
+    configs/ms/en/gdn_wide_deep3.cf \
+    configs/dl/new_oi_q12_14_128.cf \
+    $LOGS_DIR  \
+    -p unet_skip 
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
