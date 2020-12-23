@@ -114,15 +114,6 @@ class EnhancementLosses(vis.summarizable_module.SummarizableModule):
         if self.tau_optimization_helper:
             self.tau_optimization_helper.print_summary()
 
-    def save_tau_optimization_summary(self, dataset_name, final_bpsp):
-        google_sheets_row = None
-        if self.tau_optimization_helper:
-            google_sheets_row = self.tau_optimization_helper.get_google_sheets_row()
-
-            if self.tau_optimization_helper._plot_loss:
-                self.tau_optimization_helper.save_plot(dataset_name)
-
-        tau_optim.TauOptimizationHelper.save_summary(dataset_name, final_bpsp, google_sheets_row)
 
     def set_eval(self):
         pass

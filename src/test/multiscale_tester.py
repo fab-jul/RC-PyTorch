@@ -497,8 +497,6 @@ class MultiscaleTester(object):
         crop_means.write_to_results(test_results)
         q_history.write_out()
 
-        self.blueprint.losses.save_tau_optimization_summary(
-            ds.id, test_results.means_dict()['bpsp'])
 
         return test_results
 

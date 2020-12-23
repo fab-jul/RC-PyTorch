@@ -33,18 +33,16 @@ import collections
 import math
 import os
 import time
-from collections import namedtuple
 from dataclasses import dataclass
 from typing import Tuple
 
 import numpy as np
 import torch
-from torch.nn import functional as F
 from fjcommon.no_op import NoOp
 from torch import nn
+from torch.nn import functional as F
 
 from criterion.logistic_mixture import DiscretizedMixLogisticLoss
-from helpers import sheets_logger
 from helpers.global_config import global_config
 from helpers.quantized_tensor import NormalizedTensor
 from modules import prob_clf
@@ -231,20 +229,6 @@ class TauOptimizationHelper(object):
     def print_summary(self):
         print(self._summary)
 
-    @staticmethod
-    def save_summary(dataset_name, final_bpsp, tau_params=None):
-        _SHEETS_ID = os.environ.get('SHEETS_ID', None)
-        if not _SHEETS_ID:
-            print('No SHEETS_ID, not saving...')
-            return
-
-        if not tau_params:
-            tau_params = [''] * 16
-        logger = sheets_logger.SheetsLogger(
-            _SHEETS_ID,
-            title_cell=sheets_logger.TitleCell('A1', 'Tau Optim'),
-            sheet_name='tau_sweep')
-        logger.insert_row(dataset_name, *tau_params, final_bpsp, row_idx=3, col_idx='A')
 
     def get_google_sheets_row(self):
         params = [
