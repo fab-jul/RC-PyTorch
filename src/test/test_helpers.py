@@ -31,7 +31,6 @@ import torch
 
 from blueprints.enhancement_blueprint import enhancement_loss_lt, \
     EnhancementLoss, QStrategy, EnhancementBlueprint
-from criterion.losses import MultiscaleLoss
 from helpers.quantized_tensor import SymbolTensor
 
 CACHE_PKL = 'cache.pkl'
@@ -59,13 +58,7 @@ class TestResults(object):
             self.per_img_results[metric][filename] = result
 
     def set_from_loss(self, loss_out, filename):
-        if isinstance(loss_out, MultiscaleLoss):
-            self.set(filename, 'bpsp', sum(loss_out.all_bpsps))
-            self.set(filename, 'bpsp_rgb', loss_out.all_bpsps[0])
-            # test_results.set(filename, 'mse_rgb', loss_out.mse_rgb)
-            self.set(filename, 'psnr_rgb', loss_out.psnr_rgb)
-            self.set(filename, 'bpp_zs', 3 * sum(loss_out.all_bpsps[1:]))
-        elif isinstance(loss_out, EnhancementLoss):
+        if isinstance(loss_out, EnhancementLoss):
             self.set(filename, 'bpsp', loss_out.bpsp_base + loss_out.bpsp_residual)
             # self.set(filename, 'bpsp_base', loss_out.bpsp_base)
             # self.set(filename, 'bpsp_residual', loss_out.bpsp_residual)
