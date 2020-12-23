@@ -24,7 +24,18 @@ learned approaches as well as PNG, WebP, and JPEG2000.
 
 # About the Code
 
-This is bla bla
+The released code is very close to what we used when running experiments
+for the paper. The codebase evolved from the [L3C repo](https://github.com/fab-jul/L3C-PyTorch/)
+and contains code that is unused in this paper.
+
+## Naming
+
+Files specific to this paper usually are marked "enhancement" or "enh" as 
+this was the internal name. We frequently use the following terms:
+
+- `x_r` / "raw" image: The input image, uncompressed. Note that this is inconsistent with the paper, where `x_r` is the residual
+- ``
+- `x_l` / "lossy" / "compressed" image: The image obtained by feeding the raw iamge through BPG.
 
 
 # Setup Environment
