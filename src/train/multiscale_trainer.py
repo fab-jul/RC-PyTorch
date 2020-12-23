@@ -163,11 +163,9 @@ class MultiscaleTrainer(Trainer):
     @staticmethod
     def get_style_from_config(config_p: str):
         components = config_p.split(os.path.sep)
-        if 'en' in components:
-            return 'enhancement'
         if 'clf' in components:
             return 'classifier'
-        return 'multiscale'
+        return 'enhancement'
 
     def modules_to_save(self):
         return {'net': self.blueprint.net,
