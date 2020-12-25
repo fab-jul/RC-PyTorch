@@ -24,6 +24,7 @@ import subprocess
 from fjcommon import iterable_ext
 import multiprocessing
 import os
+import sys
 
 from dataloaders import cached_listdir_imgs
 
@@ -144,7 +145,8 @@ def main():
     elif flags.mode == 'download_and_unpack':
         download_and_unpack(flags.outdir)
     else:
-        raise ValueError
+        p.print_usage()
+        sys.exit(1)
 
 
 if __name__ == '__main__':
