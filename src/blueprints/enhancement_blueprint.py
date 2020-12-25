@@ -154,7 +154,7 @@ class EnhancementLosses(vis.summarizable_module.SummarizableModule):
 
 class EnhancementBlueprint(vis.summarizable_module.SummarizableModule):
     def __init__(self, config_en, is_testing=False):
-        super(nhancementBlueprint, self).__init__()
+        super(EnhancementBlueprint, self).__init__()
 
         self.net = EnhancementNetwork(config_en)
         self.net = self.net.to(pe.DEVICE)

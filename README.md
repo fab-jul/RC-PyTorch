@@ -71,6 +71,12 @@ Follow the instractions on http://bellard.org/bpg/ to install it.
 
 Afterwards, make sure `bpgenc` and `bpgdec` is in `$PATH` 
 by running `bpgenc` in your console.
+You can run the following script to test:
+
+```bash
+pushd $RC_ROOT/RC-PyTorch/src
+bash test_bpg_available.sh
+```
 
 ## Python Environment
 
@@ -102,15 +108,7 @@ The pre-processing with all these Q is an artifact of the fact that this code
 was used for experimentation also. In the "real world", we would run
 BPG only with the Q that is output by the Q-classifier.
 
-_Note_: This can take ~1h total,
-and we ran it on a CPU cluster.
-The code is somewhat generic but very likely needs to be adapted to your
-cluster, so by default it runs on the current host with 16 processes.
-See `task_array.py` for more info. 
-
 ### CLIC.mobile and CLIC.pro
-
-First download the CLIC 2020 validation sets if you don't have them already:
 
 ```bash
 pushd "$RC_ROOT/datasets"
@@ -135,7 +133,7 @@ bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/professional_valid
 ### Open Images Validation 500
 
 For Open Images, we use the same validation set that we used for L3C,
-which can download here: [Open Images Validation 500](http://data.vision.ee.ethz.ch/mentzerf/validation_sets_lossless/val_oi_500_r.tar.gz)
+which can be downloaded here: [Open Images Validation 500](http://data.vision.ee.ethz.ch/mentzerf/validation_sets_lossless/val_oi_500_r.tar.gz)
 
 ```bash
 pushd "$RC_ROOT/datasets"
@@ -228,6 +226,11 @@ mobile_valid...         1109_1715   998500   1.325e+01   2.537
 professional_valid...   1109_1715   998500   1.385e+01   2.932
 val_oi_500_r...         1109_1715   998500   1.393e+01   2.790
 ```
+
+## Sampling
+
+To get the sampling figures shown in the paper, pass `--sample=some/dir`
+to `run_test.py`.
 
 ## Our TB
 

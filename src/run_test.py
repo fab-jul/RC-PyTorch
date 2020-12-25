@@ -171,8 +171,6 @@ def parse_flags(args):
     p.add_argument('--qstrategy', choices=[q.value for q in enhancement_blueprint.QStrategy])
     p.add_argument('--tau_optimization', action='store_true')
 
-    p.add_argument('--paper', action='store_true')
-    p.add_argument('--new_clf', action='store_true')
 
     p.add_argument('--modulo_op', type=int)
 
@@ -227,29 +225,9 @@ def parse_flags(args):
         global_config.add_from_flag(flags.p)
         print('Global config\n', global_config)
 
-    if flags.paper:
-        print('--paper given, updating flags...')
-        # flags.tau_optimization = True
-        # print('--tau_optimization')
-        if not flags.clf_p:
-            if flags.new_clf:
-                flags.clf_p = '/scratch_net/fryr_third/mentzerf/logs/clflogs/' \
-                              '1115_1729 clf@down2_nonorm_down clf@model1715 exp_min=6.25e-06 ' \
-                              'lr.initial=0.0001 lr.schedule=exp_0.25_i50000 n_resblock=4/' \
-                              'ckpts/ckpt_0000106000.pt'
-            else:
-                flags.clf_p = '/scratch_net/fryr_third/mentzerf/logs/clflogs/' \
-                              '1110_2213 clf@down2_nonorm_down clf@base exp_min=6.25e-06 ' \
-                              'lr.initial=0.0001 lr.schedule=exp_0.25_i50000 n_resblock=8/' \
-                              'ckpts/ckpt_0000090000.pt.tmp'
-            print('--clf_p', flags.clf_p)
-        if not flags.qstrategy:
-            flags.qstrategy = enhancement_blueprint.QStrategy.CLF_ONLY.value
-            print('--qstrategy', flags.qstrategy)
-        # - v QSTART = QSTART_CLF_ONLY -
 
     if flags.clf_p:
-      assert os.path.isfile(flags.clf_p), flags.clf_p
+        assert os.path.isfile(flags.clf_p), flags.clf_p
 
     if flags.compare_theory and not flags.write_to_files:
         raise ValueError('Cannot have --compare_theory without --write_to_files.')

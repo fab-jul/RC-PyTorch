@@ -436,8 +436,6 @@ class MultiscaleTester(object):
                     x_n_crop, _, n_sp_pre_pad = self.blueprint.pad_pack(raw_crop, compressed_crop, bpps)
                     out = self.blueprint.forward(x_n_crop, bpps)  # Note: bpps only used for conditional IN!
 
-                    # if self.flags.save_imgs:  # TODO(release): rm
-
                     # NOTE: if --tau_optimization is given, this updates `out.network_out` in-place!
                     #       That means that then, --sample will also use the tau...
                     loss_out = self.blueprint.losses(
@@ -649,8 +647,7 @@ class MultiscaleTester(object):
             vs, cs = torch.unique(t_n, return_counts=True)
             vs = [v for c, v in sorted(zip(cs, vs), reverse=True)]
             most_frequent = vs[0]
-            print('Setting', most_frequent, 'to white')
-            t_n[t_n==vs[0]] = 255
+            t_n[t_n==most_frequent] = 255
             return t_n
 
         # fn_res = f'{save_prefix}_{total_bpsp:.3f}'
