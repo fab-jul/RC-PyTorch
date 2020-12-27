@@ -33,6 +33,7 @@ BASE_URL = "http://data.vision.ee.ethz.ch/mentzerf/rc_data/"
 TAR_URLS = [
     BASE_URL + f'train_oi_r.tar.gz.{i}' for i in range(10)
 ]
+TAR_GLOB = 'train_oi_r.tar.gz.*'
 
 
 def download_and_unpack(outdir):
@@ -42,12 +43,19 @@ def download_and_unpack(outdir):
         transferred_bytes = num_blocks_transferred * block_size
         percent = transferred_bytes / total_size * 100
         if int(percent * 100) % 10 == 0:
-            print(f'\r{local_p}: {percent:.1f}%', end='', flush=True)
+            print(f'\r-> {local_p} | {percent:.1f}% ...', end='', flush=True)
 
     for i, url in enumerate(TAR_URLS, 1):
         local_p = os.path.join(outdir, os.path.basename(url))
+        if os.path.isfile(local_p):
+            print(f'Exists, skipping: {url}')
+            continue
         print(f'Downloading {url} [Part {i}/{len(TAR_URLS)}]...')
         urllib.request.urlretrieve(url, local_p, reporthook)
+        print()  # To get a newline after the CRs above.
+
+    tar_glob = os.path.join(outdir, TAR_GLOB)
+    unpack(tar_glob)
 
 
 def unpack(tar_glob):
