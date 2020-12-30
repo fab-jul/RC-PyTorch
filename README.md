@@ -58,8 +58,10 @@ $RC_ROOT/
 To set this up:
 
 ```bash
-RC_ROOT=/path/to/wherever/you/want
-mkdir -p $RC_ROOT
+RC_ROOT="/path/to/wherever/you/want"
+mkdir -p "$RC_ROOT"
+mkdir -p "$RC_ROOT/datasets"
+mkdir -p "$RC_ROOT/models"
 pushd $RC_ROOT
 git clone https://github.com/fab-jul/RC-PyTorch
 ```
@@ -99,7 +101,6 @@ pip install -r requirements.txt
 ```
 
 # Preparing datasets
-
 
 We preprocess our datasets by compressing each image with a variety of
 BPG quantization levels, as described in the following. Since the Q-classifier
@@ -178,7 +179,7 @@ run our model on Open Images as follows:
 DATASET_DIR="$RC_ROOT/datasets"
 MODELS_DIR="$RC_ROOT/models"
 
-pushd "$ROOT/RC-PyTorch/src"
+pushd "$RC_ROOT/RC-PyTorch/src"
 
 # Note: depending on your environment, adapt CUDA_VISIBLE_DEVICES.
 CUDA_VISIBLE_DEVICEs=0 python -u run_test.py \
@@ -240,7 +241,32 @@ TODO: Link our tensorboard.
 # Training your own models
 
 
-## Prepare datasets
+## Prepare dataset
+
+We uploaded our training set as 10 `.tar.gz` files, which you can
+download and extract with the handy `training_set_helper.py` script.
+
+```bash
+pushd "$RC_ROOT/RC-PyTorch/src"
+
+# Tars will be downloaded to $RC_ROOT/datasets/, and then the images will
+# be in $RC_ROOT/datasets/train_oi_r.
+TRAIN_DATA_DIR="$RC_ROOT/datasets"
+python -u training_set_helper.py download_and_unpack "$TRAIN_DATA_DIR"
+```
+
+The tar files are downloaded sequentially and the unpacking then happens
+in parallel with 10 processes.
+
+You will also need a validation set. You can use what we used, DIV2K,
+but you need an adapted version (`DIV2K_valid_HR_crop4`), 
+so the easiest is to do the following:
+
+```bash
+pushd "$RC_ROOT/datasets"
+wget http://data.vision.ee.ethz.ch/mentzerf/rc_data/DIV2K_valid_HR_rc.tar.gz
+tar xvf DIV2K_valid_HR_rc.tar.gz
+```
 
 ## Train
 
@@ -249,11 +275,16 @@ to train the models released above:
 
 ```bash
 
+# NOTE: This assumes that $RC_ROOT is set and that 
+# DIV2K_VALID_HR_crop4 and DIV2K_VALID_HR_crop4_bpg_q12 exist
+# at $RC_ROOT/datasets. If this is not the case,
+# adapt the config file at configs/dl/new_oi_q12_14_128.cf
+
 # You can set this to whatever you want
 LOGS_DIR="$RC_ROOT/models"
 
 CUDA_VISIBLE_DEVICES=0 python train.py \
-    configs/ms/en/gdn_wide_deep3.cf \
+    configs/ms/gdn_wide_deep3.cf \
     configs/dl/new_oi_q12_14_128.cf \
     $LOGS_DIR  \
     -p unet_skip 

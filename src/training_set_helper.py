@@ -29,11 +29,14 @@ import sys
 from dataloaders import cached_listdir_imgs
 
 
+BASE_NAME = 'train_oi_r'
 BASE_URL = "http://data.vision.ee.ethz.ch/mentzerf/rc_data/"
 TAR_URLS = [
-    BASE_URL + f'train_oi_r.tar.gz.{i}' for i in range(10)
+    BASE_URL + f'{BASE_NAME}.tar.gz.{i}' for i in range(10)
 ]
-TAR_GLOB = 'train_oi_r.tar.gz.*'
+TAR_GLOB = f'{BASE_NAME}.tar.gz.*'
+NUM_IMGS_PER_TAR = {f'{BASE_NAME}.tar.gz.{i}': 32795 if i == 9 else 32800
+                    for i in range(10)}
 
 
 def download_and_unpack(outdir):
@@ -57,13 +60,16 @@ def download_and_unpack(outdir):
     tar_glob = os.path.join(outdir, TAR_GLOB)
     unpack(tar_glob)
 
+    print(f'All done. Images are in {outdir}/{BASE_NAME}.')
+    print(f'You can now delete the .tar.gz.* files in {outdir}.')
+
 
 def unpack(tar_glob):
     ps = glob.glob(tar_glob)
     if not ps:
         raise ValueError(tar_glob)
 
-    print(f'Unpacking {len(ps)} tar files...')
+    print(f'Unpacking {len(ps)} tar files with {len(ps)} processes...')
     with multiprocessing.Pool(processes=len(ps)) as pool:
         completed = 0
         for out_p in pool.imap_unordered(_unpack_tar, enumerate(ps)):
@@ -73,8 +79,15 @@ def unpack(tar_glob):
 
 def _unpack_tar(idx_and_p):
     idx, p = idx_and_p
-    for update in iter_progress_of_command(cmd=['tar', 'xvf', p]):
-        print(f'JOB {idx}: {update}')
+    out_dir = os.path.dirname(p)
+    filename = os.path.basename(p)
+    num_files = NUM_IMGS_PER_TAR[filename]
+    for percent in iter_progress_of_command(
+      cmd=['tar', 'xvf', p],
+      total_expected_lines=num_files,
+      wd=out_dir):
+        print(f'Unpacking #{idx}: {percent}...')
+    return p
 
 
 def create(indir, num_tars):
@@ -110,7 +123,7 @@ def _pack_as_tar(idx_and_ps):
           cmd=['tar', 'czvf', out_p] + normalized_ps,
           total_expected_lines=len(ps),
           wd=wd):
-        print(f'JOB {idx}: {percent * 100:.1f}%')
+        print(f'JOB {idx}: {percent}%')
     return out_p
 
 
@@ -118,32 +131,31 @@ def iter_progress_of_command(cmd, total_expected_lines=None, wd=None):
     proc = subprocess.Popen(cmd, cwd=wd,
                             stderr=subprocess.STDOUT,
                             stdout=subprocess.PIPE)
-    if total_expected_lines:
-        print_every = max(total_expected_lines // 50, 1)
-    else:
-        print_every = 100
-
+    print_every = max(total_expected_lines // 20, 1)  # Update every 5%
     completed = 0
-    for _ in proc.stdout:
-        completed += 1
+    for _ in proc.stdout:  # Assume every line of output is one item completed.
         if completed % print_every == 0:
-            if total_expected_lines:
-                percent = completed / total_expected_lines
-                yield f'{percent * 100:.1f}%'
-            else:
-                yield f'{completed} done'
+            percent = completed / total_expected_lines
+            yield f'{percent * 100:.1f}%'
+        completed += 1
 
 
 def main():
     p = argparse.ArgumentParser()
     mode_parsers = p.add_subparsers(dest='mode')
+
+    unpack_p = mode_parsers.add_parser('download_and_unpack')
+    unpack_p.add_argument(
+      'outdir',
+      help='Folder where the tar files will be downloaded and where the images '
+           'will be unpacked (images will go into a subfolder).')
+
     create_p = mode_parsers.add_parser('create')
     create_p.add_argument('indir')
     create_p.add_argument('--num_chunks', default=10, type=int)
+
     unpack_p = mode_parsers.add_parser('unpack')
     unpack_p.add_argument('tar_glob')
-    unpack_p = mode_parsers.add_parser('download_and_unpack')
-    unpack_p.add_argument('outdir')
 
     flags = p.parse_args()
     if flags.mode == 'create':
