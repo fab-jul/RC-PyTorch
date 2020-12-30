@@ -27,3 +27,5 @@ learned approaches as well as PNG, WebP, and JPEG2000.
 - [ ] Code
 - [ ] Datasets
 - [ ] Preprocessing
+
+**Status December 2020**: Code release is tracked in [Issue #2](https://github.com/fab-jul/RC-PyTorch/issues/2)
