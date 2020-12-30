@@ -258,6 +258,22 @@ python -u training_set_helper.py download_and_unpack "$TRAIN_DATA_DIR"
 The tar files are downloaded sequentially and the unpacking then happens
 in parallel with 10 processes.
 
+Next, you will need to compress each of these with a random quality
+factor using BPG, which is done with the following snipped.
+This may take a significant amount of time on a single machine,
+as you compress 300k+ images. We ran this on a CPU cluster, and the code
+structure for this is in `task_array.py`, but likely needs significant
+adaptation for your setup. If you run the following as is, the work
+is split over 16 processes, which may be bearable. If you have a beefier
+CPU, adapt `MAX_PROCESS`. On our single CPU, 24-core test machine it took
+~10h with `MAC_PROCESS=24`.
+
+```bash
+export MAX_PROCESS=16
+pushd "$RC_ROOT/RC-PyTorch/src"
+bash prep_bpg_ds.sh R12_14 $RC_ROOT/datasets/train_oi_r
+```
+
 You will also need a validation set. You can use what we used, DIV2K,
 but you need an adapted version (`DIV2K_valid_HR_crop4`), 
 so the easiest is to do the following:
@@ -289,6 +305,10 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
     $LOGS_DIR  \
     -p unet_skip 
 ```
+
+## Train Q-Classifier
+
+TODO: Upcoming
 
 
 

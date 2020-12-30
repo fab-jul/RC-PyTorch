@@ -38,6 +38,9 @@ TAR_GLOB = f'{BASE_NAME}.tar.gz.*'
 NUM_IMGS_PER_TAR = {f'{BASE_NAME}.tar.gz.{i}': 32795 if i == 9 else 32800
                     for i in range(10)}
 
+CACHED_GLOB_NAME = cached_listdir_imgs.PKL_NAME
+CACHED_GLOB_URL = BASE_URL + CACHED_GLOB_NAME
+
 
 def download_and_unpack(outdir):
     os.makedirs(outdir, exist_ok=True)
@@ -47,6 +50,8 @@ def download_and_unpack(outdir):
         percent = transferred_bytes / total_size * 100
         if int(percent * 100) % 10 == 0:
             print(f'\r-> {local_p} | {percent:.1f}% ...', end='', flush=True)
+        if transferred_bytes >= total_size:
+            print()  # To get a newline after the CRs above.
 
     for i, url in enumerate(TAR_URLS, 1):
         local_p = os.path.join(outdir, os.path.basename(url))
@@ -55,13 +60,17 @@ def download_and_unpack(outdir):
             continue
         print(f'Downloading {url} [Part {i}/{len(TAR_URLS)}]...')
         urllib.request.urlretrieve(url, local_p, reporthook)
-        print()  # To get a newline after the CRs above.
 
     tar_glob = os.path.join(outdir, TAR_GLOB)
     unpack(tar_glob)
 
-    print(f'All done. Images are in {outdir}/{BASE_NAME}.')
-    print(f'You can now delete the .tar.gz.* files in {outdir}.')
+    # Move the glob file
+    local_p = os.path.join(outdir, BASE_NAME, CACHED_GLOB_NAME)
+    print(f'Downloading {CACHED_GLOB_URL} -> {local_p}...')
+    urllib.request.urlretrieve(CACHED_GLOB_URL, local_p, reporthook)
+
+    print(f'\nAll done. Images are in {outdir}/{BASE_NAME}.'
+          f'\nYou can now delete the .tar.gz.* files in {outdir}.\n')
 
 
 def unpack(tar_glob):

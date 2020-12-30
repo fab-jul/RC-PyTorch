@@ -104,25 +104,3 @@ def job_enumerate(it):
     for i, el in enumerate(it):
         if i % NUM_TASKS == TASK_ID:
             yield i, el
-
-
-
-def main():
-    p = argparse.ArgumentParser()
-    p.add_argument('-j')
-    flags = p.parse_args()
-    if flags.j:
-        print(Accumulator().join(flags.j))
-        return
-
-    import time
-    out_dir = 'testing_task_array'
-    os.makedirs(out_dir, exist_ok=True)
-    for i, el in job_enumerate(range(100)):
-        with open(os.path.join(out_dir, str(i)), 'w') as f:
-            f.write(str(TASK_ID) + '\n')
-        Accumulator().post(str(i), el)
-
-
-if __name__ == '__main__':
-    main()
