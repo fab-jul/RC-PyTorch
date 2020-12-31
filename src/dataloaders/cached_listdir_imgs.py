@@ -276,6 +276,12 @@ def cached_listdir_imgs_max(p, max_size=None, discard_shitty=True):
     return Images(ps, id=f'{os.path.basename(p.rstrip(os.path.sep))}_{max_size}_dS={discard_shitty}')
 
 
+def make_cache_fast(p):
+    _get_pickle(p,
+                reset=False, distributed_create=False,
+                create_without_shitty=True, num_folder_levels=0)
+
+
 def cached_listdir_imgs(p, min_size=None, discard_shitty=True) -> Images:
     if isinstance(p, list):
         return _joined(cached_listdir_imgs(p_, min_size, discard_shitty)

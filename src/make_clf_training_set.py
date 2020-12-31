@@ -16,21 +16,38 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with L3C-PyTorch.  If not, see <https://www.gnu.org/licenses/>.
 """
-
+import shutil
+import sys
 import os
 import argparse
 
-from dataloaders.cached_listdir_imgs import cached_listdir_imgs
+from dataloaders.cached_listdir_imgs import cached_listdir_imgs, make_cache_fast
 
 
 def make_clf_training_set(training_set_dir):
     V = cached_listdir_imgs(training_set_dir,
                             min_size=512,
                             discard_shitty=False)
-    print(len(V))
     clf_training_set_filenames = get_clf_training_set_filenames()
+
+    # Make sure we have them all
     ps = set(map(os.path.basename, V.ps))
-    print(set(clf_training_set_filenames) - ps)
+    missing = set(clf_training_set_filenames) - ps
+    if missing:
+        print(f'ERROR: Not all files found, missing {missing}!')
+        sys.exit(1)
+
+    # Create the subset folder
+    out_dir = training_set_dir.rstrip(os.path.sep) + '_subset_clf'
+    print(f'Creating {out_dir}...')
+    os.makedirs(out_dir)
+
+    for filename in clf_training_set_filenames:
+        in_p = os.path.join(training_set_dir, filename)
+        out_p = os.path.join(out_dir, filename)
+        shutil.copy(in_p, out_p)
+
+    make_cache_fast(out_dir)
 
 
 def get_clf_training_set_filenames() -> list:
