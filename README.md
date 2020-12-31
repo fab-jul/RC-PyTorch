@@ -310,10 +310,13 @@ CUDA_VISIBLE_DEVICES=0 python -u train.py \
 #### Get the ground truth data.
 
 To train the Q-Classifier, we need to figure out the optimal Qs
-for all images in the training set. For the model 
-we published (downloaded by `get_model.sh`, see above),
+for all images in the training set.
+
+For the model we published (downloaded by `get_model.sh`, see above),
 the ground truth data is also avaiable and was downloaded by `get_model.sh`
-into `$RC_ROOT/datasets/q_histories`. If you trained your own model,
+into `$RC_ROOT/datasets/q_histories`. 
+
+If you trained your own model,
 you need to create `q_histories` as follows:
 
 ```bash
