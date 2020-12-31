@@ -5,7 +5,7 @@ global_config = None
 optim = 'Adam'
 
 lr.initial = 0.0001
-lr.schedule = 'none'
+lr.schedule = 'exp_0.25_i50000'
 weight_decay = 1e-4
 num_classes = 7
 first_class = 11
@@ -18,3 +18,5 @@ deep_tail = False
 head = 'down2'
 norm = 'identity'
 num_res_down = 2
+
+global_config = "exp_min=6.25e-06"

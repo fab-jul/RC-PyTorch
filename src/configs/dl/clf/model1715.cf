@@ -15,7 +15,7 @@ is_residual_dataset = False
 fixed_first = None
 
 # can also be a list of paths!
-imgs_dir_train = '$DATA_ROOT$/oi.train.rand/train_oi_r'
-imgs_dir_val = '$DATA_ROOT$/oi.val.rand/val_oi_500_r'
-optimal_qs_csv_train = '$DATA_ROOT$/q_histories/train_oi_r_32710_None_dS=False_multi_q11_12_13_14_15_16_17_601589_1109_1715.csv'
-optimal_qs_csv_val = '$DATA_ROOT$/q_histories/val_oi_500_r_None_dS=False_multi_q9_10_11_12_13_14_15_16_17_601589_1109_1715.csv'
+imgs_dir_train = '$RC_ROOT$/datasets/train_oi_r'
+imgs_dir_val = '$RC_ROOT$/datasets/val_oi_500_r'
+optimal_qs_csv_train = '$RC_ROOT$/datasets/q_histories/train_oi_r_32710_None_dS=False_multi_q11_12_13_14_15_16_17_601589_1109_1715.csv'
+optimal_qs_csv_val = '$RC_ROOT$/datasets/q_histories/val_oi_500_r_None_dS=False_multi_q9_10_11_12_13_14_15_16_17_601589_1109_1715.csv'

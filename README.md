@@ -274,9 +274,8 @@ pushd "$RC_ROOT/RC-PyTorch/src"
 bash prep_bpg_ds.sh R12_14 $RC_ROOT/datasets/train_oi_r
 ```
 
-You will also need a validation set. You can use what we used, DIV2K,
-but you need an adapted version (`DIV2K_valid_HR_crop4`), 
-so the easiest is to do the following:
+You will also need a validation set. We used `DIV2K_valid_HR_crop4`,
+which you can get with:
 
 ```bash
 pushd "$RC_ROOT/datasets"
@@ -299,7 +298,7 @@ to train the models released above:
 # You can set this to whatever you want
 LOGS_DIR="$RC_ROOT/models"
 
-CUDA_VISIBLE_DEVICES=0 python train.py \
+CUDA_VISIBLE_DEVICES=0 python -u train.py \
     configs/ms/gdn_wide_deep3.cf \
     configs/dl/new_oi_q12_14_128.cf \
     $LOGS_DIR  \
@@ -308,24 +307,17 @@ CUDA_VISIBLE_DEVICES=0 python train.py \
 
 ## Train Q-Classifier
 
-TODO: Upcoming
+To train the Q-Classifier, use the stored `q_histories` that were
+downloaded by `get_model.sh` (see above - you should have a folder
+at `$RC_ROOT/datasets/q_histories`). 
 
+```bash
+# You can set this to whatever you want
+LOGS_DIR="$RC_ROOT/models"
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+CUDA_VISIBLE_DEVICES=0 python -u train.py \
+   configs/ms/clf/down2_nonorm_down.clf \
+   configs/dl/clf/model1715.clf \
+   $LOGS_DIR
+```
+ 
