@@ -10896,7 +10896,6 @@
 2ffbee6750f892f5.png
 2ffd9afe4b20ddee.png
 2ffddbc7b732dcb2.png
-image.png
 0000271195f2c007.png
 00004fd8760d4346.png
 00009cadede2ed69.png
@@ -21797,7 +21796,6 @@ image.png
 2ffc89ef587bddbf.png
 2ffdaafcecadeb8b.png
 2ffef0ba45646d55.png
-image.png
 00003e2837c7b728.png
 00005bf623ff1ac2.png
 0000a16e4b057580.png
