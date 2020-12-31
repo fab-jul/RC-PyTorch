@@ -320,6 +320,16 @@ If you trained your own model,
 you need to create `q_histories` as follows:
 
 ```bash
+# First make create the subset of the training set needed.
+pushd "$RC_ROOT/RC-PyTorch/src"
+python -u make_clf_training_set.py "$RC_ROOT/datasets/train_oi_r"
+
+# Now compress with every image with 7 quality factors.
+# This step will take a long time (~7h on a test machine).
+# Set MAX_PROCESS to the number of cores of your machine for speed.
+MAX_PROCESS=16 bash prep_bpg_ds.sh A11_17 "$RC_ROOT/datasets/train_oi_r_subset_clf"
+
+# Now, we determine the optimal Qs, given a trained model:
 TODO
 ```
 

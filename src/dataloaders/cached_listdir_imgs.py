@@ -18,6 +18,9 @@ along with L3C-PyTorch.  If not, see <https://www.gnu.org/licenses/>.
 
 --------------------------------------------------------------------------------
 
+This helps make repeated globs of folders with a lot of files fast.
+Especially useful on slow distributed filesystems.
+
 cached_glob(p, min_size, discard_shitty)
 
 -> checks if there is p/cached_glob.pkl

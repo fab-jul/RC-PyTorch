@@ -40,14 +40,23 @@ def make_clf_training_set(training_set_dir):
     # Create the subset folder
     out_dir = training_set_dir.rstrip(os.path.sep) + '_subset_clf'
     print(f'Creating {out_dir}...')
-    os.makedirs(out_dir)
+    os.makedirs(out_dir, exist_ok=True)
 
-    for filename in clf_training_set_filenames:
+    print_every = max(len(clf_training_set_filenames) // 20, 1)  # Update every 5%
+    for i, filename in enumerate(clf_training_set_filenames):
+        if i > 0 and i % print_every == 0:
+            percent = i / len(clf_training_set_filenames) * 100
+            print(f'Update: {percent:.1f}% copied')
         in_p = os.path.join(training_set_dir, filename)
         out_p = os.path.join(out_dir, filename)
-        shutil.copy(in_p, out_p)
+        if not os.path.isfile(out_p):
+            shutil.copy(in_p, out_p)
 
+    print('Caching files...')
     make_cache_fast(out_dir)
+
+    print(f'\nSubfolder created at {out_dir}. Now run:\n'
+          f'bash prep_bpg_ds.sh A11_17 {out_dir}')
 
 
 def get_clf_training_set_filenames() -> list:
@@ -55,7 +64,7 @@ def get_clf_training_set_filenames() -> list:
     clf_training_set_filenames_p = os.path.join(
         this_file_p, 'data', 'clf_training_set_filenames.txt')
     with open(clf_training_set_filenames_p) as f:
-        return f.read().split('\n')
+        return sorted(filter(None, f.read().split('\n')))
 
 
 def main():
