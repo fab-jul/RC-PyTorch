@@ -384,7 +384,6 @@ class MultiscaleTester(object):
                      if is_meta else
                      no_op.NoOp)
 
-        # I think this was to find optimal Q's distributed
         if _LIVE_HISTORY:
             existing_files = set(q_history.read())
             ds.set_skip(existing_files, modulo_op)
@@ -428,7 +427,6 @@ class MultiscaleTester(object):
                 for crop_idx, (raw_crop, compressed_crop) in enumerate(zip(
                         auto_crop.iter_crops(raw), auto_crop.iter_crops(compressed))):
                     assert raw_crop.shape == compressed_crop.shape
-                    # print(f'{filename} / {q} / crop {crop_idx}...\n')
 
                     # We have to pad images not divisible by (2 ** num_scales), because we downsample num_scales-times.
                     # To get the correct bpsp, we have to use, num_subpixels_before_pad,
