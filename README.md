@@ -34,24 +34,24 @@ Files specific to this paper usually are marked "enhancement" or "enh" as
 this was the internal name. We frequently use the following terms:
 
 - `x_r` / "raw" / "ground-truth" (gt) image: The input image, uncompressed. Note that this is inconsistent with the paper, where `x_r` is the residual
-- `x_l` / "lossy" / "compressed" image: The image obtained by feeding the raw iamge through BPG.
+- `x_l` / "lossy" / "compressed" image: The image obtained by feeding the raw image through BPG.
 - `res`: Residual between raw and lossy.
 
 # Setup Environment
 
 ## Folder structure
 
-Suggested structure that is assumed by this README, but any
-other structure is supported.
+The following is the suggested structure that is assumed by this README, but any
+other structure is supported:
 
 ```
 $RC_ROOT/
     datasets/       <-- See the "Preparing datasets" section.
-    models/         <-- The result of get_models.sh, see below
-    RC-PyTorch/     <-- The result of a git clone of this repo
+    models/         <-- The result of get_models.sh, see below.
+    RC-PyTorch/     <-- The result of a git clone of this repo.
         src/
         figs/
-        README.md   <-- This file
+        README.md   <-- This file.
         ...
 ```
 
@@ -73,7 +73,7 @@ Follow the instractions on http://bellard.org/bpg/ to install it.
 
 Afterwards, make sure `bpgenc` and `bpgdec` is in `$PATH` 
 by running `bpgenc` in your console.
-You can run the following script to test:
+You can also run the following script to test:
 
 ```bash
 pushd $RC_ROOT/RC-PyTorch/src
@@ -96,11 +96,11 @@ conda activate $NAME
 conda install pytorch==1.1.0 torchvision cudatoolkit==10.0.130 -c pytorch
 
 # Install the pip requirements
-cd $RC_ROOT/RC-PyTorch/src
+pushd $RC_ROOT/RC-PyTorch/src
 pip install -r requirements.txt
 ```
 
-# Preparing datasets
+# Preparing Evaluation Datasets
 
 We preprocess our datasets by compressing each image with a variety of
 BPG quantization levels, as described in the following. Since the Q-classifier
@@ -123,7 +123,7 @@ unzip professional_valid_2020.zip
 mv valid professional_valid  # Give the extracted archive a unique name
 ```
 
-Preprocess with BPG (see above).
+Preprocess with BPG.
 
 ```bash
 pushd "$RC_ROOT/RC-PyTorch/src"
@@ -133,8 +133,7 @@ bash prep_bpg_ds.sh A9_17 $RC_ROOT/datasets/professional_valid
 
 ### Open Images Validation 500
 
-For Open Images, we use the same validation set that we used for L3C,
-which can be downloaded here: [Open Images Validation 500](http://data.vision.ee.ethz.ch/mentzerf/validation_sets_lossless/val_oi_500_r.tar.gz)
+For Open Images, we use the same validation set that we used for [L3C](TODO):
 
 ```bash
 pushd "$RC_ROOT/datasets"
@@ -172,7 +171,7 @@ bash get_models.sh "$MODELS_DIR"
 
 After downloading and preparing Open Images as above, and 
 downloading the models, you can 
-run our model on Open Images as follows:
+run our model on Open Images as follows, to test if all works:
 
 ``` 
 # Running on Open Iamges 500
@@ -182,7 +181,7 @@ MODELS_DIR="$RC_ROOT/models"
 pushd "$RC_ROOT/RC-PyTorch/src"
 
 # Note: depending on your environment, adapt CUDA_VISIBLE_DEVICES.
-CUDA_VISIBLE_DEVICEs=0 python -u run_test.py \
+CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
     "$MODELS_DIR" 1109_1715 "AUTOEXPAND:$DATASET_DIR/val_oi_500_r" \
     --restore_itr 1000000 \
     --tau \
@@ -204,13 +203,15 @@ testset         exp         itr      Q           bpsp
 val_oi_500...   1109_1715   998500   1.393e+01   2.790
 ```
 
-## Get bpsp on other datasets
+### Get bpsp on all evaluation datasets from the paper
 
 You can also pass multiple datasets by separating them with commas.
-For example, to run on all datasets of the paper:
+For example, to run on all datasets of the paper
+(assuming you downloaded them as described above):
 
 ```
-CUDA_VISIBLE_DEVICEs=0 python -u run_test.py \
+# Note: depending on your environment, adapt CUDA_VISIBLE_DEVICES.
+CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
     "$MODELS_DIR" 1109_1715 \
     "AUTOEXPAND:$DATASET_DIR/professional_valid,AUTOEXPAND:$DATASET_DIR/DIV2K_valid_HR,AUTOEXPAND:$DATASET_DIR/mobile_valid,AUTOEXPAND:$DATASET_DIR/val_oi_500_r" \
     --restore_itr 1000000 \
@@ -233,9 +234,9 @@ val_oi_500_r...         1109_1715   998500   1.393e+01   2.790
 To get the sampling figures shown in the paper, pass `--sample=some/dir`
 to `run_test.py`.
 
-## Our TB
+<!-- ## Our TB
 
-TODO: Link our tensorboard.
+TODO: Link our tensorboard. -->
 
 
 # Training your own models
@@ -244,7 +245,7 @@ TODO: Link our tensorboard.
 ## Prepare dataset
 
 We uploaded our training set as 10 `.tar.gz` files, which you can
-download and extract with the handy `training_set_helper.py` script.
+download and extract with the handy `training_set_helper.py` script:
 
 ```bash
 pushd "$RC_ROOT/RC-PyTorch/src"
@@ -259,19 +260,18 @@ The tar files are downloaded sequentially and the unpacking then happens
 in parallel with 10 processes.
 
 Next, you will need to compress each of these with a random quality
-factor using BPG, which is done with the following snipped.
+factor using BPG, which is done with the following snippet.
 This may take a significant amount of time on a single machine,
 as you compress 300k+ images. We ran this on a CPU cluster, and the code
-structure for this is in `task_array.py`, but likely needs significant
-adaptation for your setup. If you run the following as is, the work
-is split over 16 processes, which may be bearable. If you have a beefier
-CPU, adapt `MAX_PROCESS`. On our single CPU, 24-core test machine it took
-~10h with `MAC_PROCESS=24`.
+structure for the cluster is in `task_array.py`, but likely would need significant
+adaptation for your setup. So instead, if you run the following as is, the work
+is split over 16 processes on the current machine, which may be bearable. 
+If you have a beefier CPU, adapt `MAX_PROCESS`. 
+On our single CPU, 24-core test machine it took ~10h with `MAC_PROCESS=24`.
 
 ```bash
-export MAX_PROCESS=16
 pushd "$RC_ROOT/RC-PyTorch/src"
-bash prep_bpg_ds.sh R12_14 $RC_ROOT/datasets/train_oi_r
+MAX_PROCESS=16 bash prep_bpg_ds.sh R12_14 $RC_ROOT/datasets/train_oi_r
 ```
 
 You will also need a validation set. We used `DIV2K_valid_HR_crop4`,
@@ -283,21 +283,20 @@ wget http://data.vision.ee.ethz.ch/mentzerf/rc_data/DIV2K_valid_HR_rc.tar.gz
 tar xvf DIV2K_valid_HR_rc.tar.gz
 ```
 
-## Train
+## Train your own models
 
-To train your own models, use `train.py`. The following command was used
-to train the models released above:
-
+The following command was used to train the models released above:
 ```bash
 
 # NOTE: This assumes that $RC_ROOT is set and that 
 # DIV2K_VALID_HR_crop4 and DIV2K_VALID_HR_crop4_bpg_q12 exist
-# at $RC_ROOT/datasets. If this is not the case,
-# adapt the config file at configs/dl/new_oi_q12_14_128.cf
+# at $RC_ROOT/datasets, as described above. If this is not the case,
+# adapt the config file at configs/dl/new_oi_q12_14_128.cf.
 
 # You can set this to whatever you want
 LOGS_DIR="$RC_ROOT/models"
 
+# Note: depending on your environment, adapt CUDA_VISIBLE_DEVICES.
 CUDA_VISIBLE_DEVICES=0 python -u train.py \
     configs/ms/gdn_wide_deep3.cf \
     configs/dl/new_oi_q12_14_128.cf \
@@ -343,9 +342,23 @@ Given `q_histories`, the classifier can be trained with:
 # You can set this to whatever you want
 LOGS_DIR="$RC_ROOT/models"
 
+# Note: depending on your environment, adapt CUDA_VISIBLE_DEVICES.
 CUDA_VISIBLE_DEVICES=0 python -u train.py \
    configs/ms/clf/down2_nonorm_down.cf \
    configs/dl/clf/model1715.cf \
    $LOGS_DIR
 ```
  
+
+# Citation
+
+If you use the work released here for your research, please cite the paper:
+
+```
+@InProceedings{mentzer2020learning,
+  author = {Mentzer, Fabian and Gool, Luc Van and Tschannen, Michael},
+  title = {Learning Better Lossless Compression Using Lossy Compression},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year = {2020}
+}
+```
