@@ -316,8 +316,8 @@ at `$RC_ROOT/datasets/q_histories`).
 LOGS_DIR="$RC_ROOT/models"
 
 CUDA_VISIBLE_DEVICES=0 python -u train.py \
-   configs/ms/clf/down2_nonorm_down.clf \
-   configs/dl/clf/model1715.clf \
+   configs/ms/clf/down2_nonorm_down.cf \
+   configs/dl/clf/model1715.cf \
    $LOGS_DIR
 ```
  
