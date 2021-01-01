@@ -330,7 +330,7 @@ MAX_PROCESS=16 bash prep_bpg_ds.sh A11_17 "$RC_ROOT/datasets/train_oi_r_subset_c
 
 # Now, we determine the optimal Qs, given a trained model. Replace
 # "1109_1715" with the ID of the model you trained:
-CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
+LIVE_HISTORY=1 CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
     "$LOGS_DIR" 1109_1715 "AUTOEXPAND:$DATASET_DIR/train_oi_r_subset_clf" \
     --restore_itr 1000000 \
     --qstrategy MIN

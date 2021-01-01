@@ -323,22 +323,6 @@ class MultiscaleTester(object):
         if return_cache:
             print(f'*** Found cached: {test_id}')
 
-            # TODO: what was this stuff?
-            # if self.flags.plot_psnr:
-            #     other_codec = {}
-            #     other_codec['bpg'] = other_codecs.read_max_psnrs(
-            #             os.path.join(self.flags.plot_psnr, testset.id, 'bpg'))
-            #     other_codec['balle'] = other_codecs.read_max_psnrs(
-            #             os.path.join(self.flags.plot_psnr, testset.id, 'balle'),
-            #             max_idx=-1)
-            # else:
-            #     other_codec = None
-            #
-            # _write_to_csv(test_results=self.test_output_cache[test_id],
-            #               testset=testset,
-            #               out_file_p=os.path.join('google_sheets_out',
-            #                                       f'{self.log_date}_{testset.name}_{self.restore_itr}.csv'),
-            #               other_codec=other_codec)
 
             return self.test_output_cache[test_id]
 
@@ -488,11 +472,11 @@ class MultiscaleTester(object):
             log += loss_out_meta.memory_to_str(loss_out_meta_mem, joiner=' ; ')
             _print(log, oneline=True)
             if _LIVE_HISTORY:
-                q_history.write_out()
+                q_history.write_out(verbose=False)
         _print('FINAL:' + log, oneline=True, final=True)
 
         crop_means.write_to_results(test_results)
-        q_history.write_out()
+        q_history.write_out(verbose=True)
 
 
         return test_results

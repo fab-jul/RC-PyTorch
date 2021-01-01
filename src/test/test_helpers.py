@@ -242,14 +242,15 @@ class QHistory(object):
                 self.cache[filename] = q
                 yield filename
 
-    def write_out(self):
+    def write_out(self, verbose=True):
         p = self._get_p()
         with open(p, 'w', newline='') as csvfile:
             w = csv.writer(csvfile, quoting=csv.QUOTE_MINIMAL)
             w.writerow(['image', 'q'])
             for filename, q in sorted(self.cache.items()):
                 w.writerow([filename, q])
-        print('Created', p)
+        if verbose:
+            print('Created', p)
 
 
 ITER_ALL_Q = int(os.environ.get('ITER_ALL_Q', 0)) == 1
