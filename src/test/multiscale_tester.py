@@ -387,6 +387,7 @@ class MultiscaleTester(object):
         if _LIVE_HISTORY:
             existing_files = set(q_history.read())
             ds.set_skip(existing_files, modulo_op)
+            print(f'*** Storing at {q_history.out_path()}')
 
         # If we sample, we store the result with a ImageSaver
         if self.flags.sample:

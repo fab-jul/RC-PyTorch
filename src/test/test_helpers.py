@@ -223,10 +223,14 @@ class QHistory(object):
                 cache[filename] = torch.tensor(int(q))
         return cache
 
+    def out_path(self):
+        return os.path.join(
+          self.out_dir, f'{self.test_id.dataset_id}_{self.test_id.restore_itr}_{self.log_date}.csv')
+
     def _get_p(self):
         os.makedirs(self.out_dir, exist_ok=True)
-        return os.path.join(
-                self.out_dir, f'{self.test_id.dataset_id}_{self.test_id.restore_itr}_{self.log_date}.csv')
+        return self.out_path()
+
 
     def read(self):
         p = self._get_p()
