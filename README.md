@@ -328,8 +328,12 @@ python -u make_clf_training_set.py "$RC_ROOT/datasets/train_oi_r"
 # Set MAX_PROCESS to the number of cores of your machine for speed.
 MAX_PROCESS=16 bash prep_bpg_ds.sh A11_17 "$RC_ROOT/datasets/train_oi_r_subset_clf"
 
-# Now, we determine the optimal Qs, given a trained model:
-TODO
+# Now, we determine the optimal Qs, given a trained model. Replace
+# "1109_1715" with the ID of the model you trained:
+CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
+    "$LOGS_DIR" 1109_1715 "AUTOEXPAND:$DATASET_DIR/train_oi_r_subset_clf" \
+    --restore_itr 1000000 \
+    --qstrategy MIN
 ```
 
 Then, you need to adapt `configs/dl/clf/model1715.cf` to point to this folder.

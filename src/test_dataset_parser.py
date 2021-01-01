@@ -16,11 +16,15 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with L3C-PyTorch.  If not, see <https://www.gnu.org/licenses/>.
 """
-import re
 import glob
 import os
 import re
 
+from blueprints import shared
+from dataloaders.compressed_images_loader import get_residual_dataset, \
+    MetaResidualDataset
+from dataloaders.images_loader import IndexImagesDataset
+from helpers.testset import Testset
 
 
 def name_from_images(flag):
@@ -81,8 +85,11 @@ def parse_into_datasets(images, crop=None, match_filenames=None, max_imgs_per_fo
             assert len(bpgs_dirs) >= 1, \
                 f'No BPG dirs found. Did you preprocess? {bpgs_glob}'
             get_q_re = re.compile(r'_bpg_q(\d+)$')
-            qs_to_dirs = sorted((int(get_q_re.search(bpg_dir).group(1)), bpg_dir)
-                                for bpg_dir in bpgs_dirs)
+            try:
+                qs_to_dirs = sorted((int(get_q_re.search(bpg_dir).group(1)), bpg_dir)
+                                    for bpg_dir in bpgs_dirs)
+            except AttributeError: # If the match fails
+                raise ValueError(f'Error parsing BPG dirs: {bpgs_dirs}')
             print('*** AUTOEXPAND ->\n' +
                   '\n'.join(f'{q}: {p}' for q, p in qs_to_dirs))
 

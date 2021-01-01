@@ -205,7 +205,6 @@ def rescale(im, scale):
     H2 = round(H * scale)
 
     try:
-        # TODO
         return im.resize((W2, H2), resample=Image.LANCZOS)
     except OSError as e:
         print('*** im.resize error', e)
@@ -224,7 +223,6 @@ def resize(im, res, downsampling=PIL.Image.BICUBIC):
     W2 = round(W * scaling_factor)
     H2 = round(H * scaling_factor)
     try:
-        # TODO
         return im.resize((W2, H2), resample=downsampling)
     except OSError as e:
         print('*** im.resize error', e)

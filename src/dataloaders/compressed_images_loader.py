@@ -17,37 +17,27 @@ You should have received a copy of the GNU General Public License
 along with L3C-PyTorch.  If not, see <https://www.gnu.org/licenses/>.
 """
 import argparse
-import pickle
 import os
 import random
+from multiprocessing import Manager
 
-import fasteners
 import numpy as np
 import torch
 from PIL import Image
 from decorator import contextmanager
-from fjcommon import timer
 from torch.utils.data import Dataset
 from torch.utils.data.dataloader import DataLoader
 from torchvision.transforms import RandomCrop
 from torchvision.transforms import functional as F
 
-from multiprocessing import Manager
-
 import pytorch_ext as pe
 from compressor import Compressor
 from dataloaders import images_loader
-from dataloaders.cached_listdir_imgs import Images, cached_listdir_imgs, cached_listdir_imgs_max
+from dataloaders.cached_listdir_imgs import Images, cached_listdir_imgs, \
+    cached_listdir_imgs_max
 
-# class CompressedImagesDataset(IndexImagesDataset):
-#     def __getitem__(self, idx):
-#         p = self.files[idx]
-#         d = self.dict_from_path(idx, p)
-#         d['bpp'] = Compressor.bpp_from_compressed_file(p)
-#         return d
 from dataloaders.jpg_dataloader import JPGDataset
 from helpers.global_config import global_config
-
 
 NO_ERRORS = int(os.environ.get('NO_ERRORS', 0)) == 1
 

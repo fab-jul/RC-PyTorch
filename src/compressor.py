@@ -116,12 +116,6 @@ class Compressor(object):
         self.params = params
         self.optimal_qs = None
 
-        # if task_array.NUM_TASKS == 1:
-        #     print(f'Checking for files in {self.outdir}...')
-        #     self.files_that_exist = {Compressor.filename_without_bpp(f): f for f in os.listdir(self.outdir)
-        #                              if 'bpp' in f and (os.path.getsize(os.path.join(self.outdir, f)) > 0)}
-        #     print(f'Found {len(self.files_that_exist)} files in {self.outdir}.')
-        # else:
         # TODO
         self.files_that_exist = {}
 
@@ -129,12 +123,6 @@ class Compressor(object):
             print('Creating', outdir)
             os.makedirs(outdir, exist_ok=True)
 
-        # TODO:
-        # this is also not good, because new files will never be added to the glob...
-        # try:
-        #     files_that_exist = cached_listdir_imgs.cached_listdir_imgs(outdir, discard_shitty=False).ps
-        # except ValueError:  # if dir does not yet exist
-        #     files_that_exist = []
 
     def _unroll_params(self, params: dict, filename=None):
         if 'q' in params:

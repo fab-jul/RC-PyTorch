@@ -194,7 +194,7 @@ def parse_flags(args):
 
     # p.add_argument('--plot_psnr', type=str, metavar='ROOT_OTHER_CODECS_DIR')
 
-    p.add_argument('--write_means', type=str, metavar='WRITE_OUT_DIR')  # TODO; is implemented actually
+    p.add_argument('--write_means', type=str, metavar='WRITE_OUT_DIR')
 
     p.add_argument('--write_to_files', type=str, metavar='WRITE_OUT_DIR',
                    help='Write images to files in folder WRITE_OUT_DIR, with arithmetic coder. If given, the cache is '
