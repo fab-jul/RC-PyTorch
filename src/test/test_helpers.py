@@ -174,8 +174,8 @@ class CropMeans(object):
         self.prefix_re = re.compile(r'(.*)_\d')
 
     def add(self, filename, n_sp_pre_pad, loss_out):
-        if isinstance(loss_out, MultiscaleLoss):
-            raise NotImplementedError
+        if not isinstance(loss_out, EnhancementLoss):
+            raise NotImplementedError(type(loss_out))
         prefix_match = self.prefix_re.match(filename)
         if not prefix_match:
             raise ValueError(f'Cannot match {filename}')
@@ -403,7 +403,7 @@ class LossOutMeta(object):
 
         """
         assert self.losses
-        if isinstance(next(iter(self.losses.values())), MultiscaleLoss):
+        if not isinstance(next(iter(self.losses.values())), EnhancementLoss):
             return self.losses.pop(), None
         else:
             if ITER_ALL_Q:
