@@ -1,0 +1,17 @@
+
+if [[ $(hostname) == "fryr" && -f ~/.shared_rc ]]; then
+
+    uname -n; echo "Job ID: $JOB_ID"; echo "GPU: $SGE_GPU"
+    . /home/mentzerf/miniconda3/etc/profile.d/conda.sh; conda activate pyt11;
+
+    # Local libs
+    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/local/lib
+    export PATH=$PATH:$HOME/local/bin  # webp
+
+    # BPG
+    export PATH=/scratch_net/fryr/mentzerf/bin/bpg/libbpg-0.9.7/bin:$PATH
+
+    # dirs
+    source ~/.shared_rc
+
+fi

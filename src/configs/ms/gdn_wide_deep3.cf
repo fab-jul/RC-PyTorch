@@ -1,0 +1,18 @@
+optim = "RMSprop"
+
+prob.K = 5
+prob.rgb_outputs = "means,pis,vars,coeffs"
+
+lr.initial = 0.0001
+lr.schedule = "exp_0.75_i100000"
+
+Cf = 128
+kernel_size = 3
+n_resblock = 16
+weight_decay = 0.0001
+
+global_config = (
+    "fw_s=3 long_means long_pis long_sigma "
+    "gdn no_norm_final "
+    "lr.initial=5e-05 "
+    "down_up=deconv")
