@@ -30,7 +30,7 @@ and contains code that is unused in this paper.
 
 #### Naming
 
-Files specific to this paper usually are marked "enhancement" or "enh" as 
+Files specific to this paper usually are post-fixed "enhancement" or "enh" as 
 this was the internal name. We frequently use the following terms:
 
 - `x_r` / "raw" / "ground-truth" (gt) image: The input image, uncompressed. Note that this is inconsistent with the paper, where `x_r` is the residual
@@ -105,9 +105,9 @@ pip install -r requirements.txt
 We preprocess our datasets by compressing each image with a variety of
 BPG quantization levels, as described in the following. Since the Q-classifier
 has been trained for `Q \in {9, ..., 17}`, that's the range we use.
-The pre-processing with all these Q is an artifact of the fact that this code
-was used for experimentation also. In the "real world", we would run
-BPG only with the Q that is output by the Q-classifier.
+Thanks to precomputing differnt Q's, these evaluation data sets can be used 
+for experimentation. Note that for a fixed inference model only the 
+BPG image with the Q predicted by QC has to be computed.
 
 ### CLIC.mobile and CLIC.pro
 
@@ -192,7 +192,7 @@ CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
 The first three arguments are the location of the models,
 the experiment ID (`1109_1715` here), and the dataset dir. The dataset dir
 is special as we prefix it with `AUTOEXPAND`, which causes the tester
-to get all the bpg folders that we created in the previous step (another
+to get all the BPG folders that we created in the previous step (another
 artifact of this being experimentation code). Here, you can also put any
 other dataset that you preprocessed similar to the above.
 
@@ -337,7 +337,9 @@ LIVE_HISTORY=1 CUDA_VISIBLE_DEVICES=0 python -u run_test.py \
     --qstrategy MIN
 ```
 
-Then, you need to adapt `configs/dl/clf/model1715.cf` to point to this folder.
+This will create a .CSV file in `$RC_ROOT/RC-PyTorch/src/q_histories`.
+To use it in the next step,
+you need to adapt `configs/dl/clf/model1715.cf` to point to this folder.
 
 #### Train Classifier
 
