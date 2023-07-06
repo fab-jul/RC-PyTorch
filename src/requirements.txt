@@ -1,7 +1,7 @@
 Pillow
 google-api-python-client
 oauth2client
-scipy==1.1.0
+scipy==1.10.0
 scikit-image==0.15.0
 fasteners==0.14.1
 fjcommon==0.2.12
